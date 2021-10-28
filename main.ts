@@ -421,6 +421,10 @@ let wave_attack: Sprite = null
 let exploshion_1: Sprite = null
 let weapon_menu = 0
 let common_item_generation = 0
+let snake_alert_right: animation.Animation = null
+let snake_alert_left: animation.Animation = null
+let snake_idle: animation.Animation = null
+let snake: Sprite = null
 let CodeSequence = 0
 let attack_weapon_aqua = 0
 let enemy_HP: StatusBarSprite = null
@@ -475,6 +479,205 @@ tiles.createSpritesOnTiles(sprites.builtin.forestTiles0, SpriteKind.enviroment_1
 tiles.coverAllTiles(assets.tile`transparency16`, sprites.castle.tileGrass1)
 tiles.coverAllTiles(sprites.builtin.forestTiles4, sprites.castle.tileGrass3)
 tiles.createSpritesOnTiles(assets.tile`myTile0`, SpriteKind.river)
+if (tiles.tileIs(tiles.getTileLocation(25, 36), assets.tile`brown wall face down`)) {
+    for (let value of tiles.getTilesByType(tiles.util.object4)) {
+        snake = sprites.create(img`
+            . . . . c c c c c c . . . . . . 
+            . . . c 6 7 7 7 7 6 c . . . . . 
+            . . c 7 7 7 7 7 7 7 7 c . . . . 
+            . c 6 7 7 7 7 7 7 7 7 6 c . . . 
+            . c 7 6 f 6 6 f 6 7 7 7 c . . . 
+            . f 7 6 f 6 6 f 6 7 7 7 f . . . 
+            . f 7 7 7 7 7 7 7 7 7 7 f . . . 
+            . . f 7 7 7 7 7 7 7 7 6 f c . . 
+            . . . f c c c c c 7 6 f 7 7 c . 
+            . . c 7 2 7 7 7 6 c f 7 7 7 7 c 
+            . c 7 7 2 7 7 c f c 6 7 7 6 c c 
+            c 1 1 1 1 7 6 f c c 6 6 6 c . . 
+            f 1 1 1 1 1 6 6 c 6 6 6 6 f . . 
+            f 6 1 1 1 1 1 6 6 6 6 6 c f . . 
+            . f 6 1 1 1 1 1 1 6 6 6 f . . . 
+            . . c c c c c c c c c f . . . . 
+            `, SpriteKind.Enemy)
+        tiles.placeOnTile(snake, value)
+        tiles.setTileAt(value, assets.tile`Triger block crypt`)
+        snake_idle = animation.createAnimation(ActionKind.Idle, 1000)
+        snake_idle.addAnimationFrame(img`
+            . . . . c c c c c c . . . . . . 
+            . . . c 6 7 7 7 7 6 c . . . . . 
+            . . c 7 7 7 7 7 7 7 7 c . . . . 
+            . c 6 7 7 7 7 7 7 7 7 6 c . . . 
+            . c 7 6 6 6 6 6 6 7 7 7 c . . . 
+            . f 7 f f 6 6 f f 7 7 7 f . . . 
+            . f 7 7 7 7 7 7 7 7 7 7 f . . . 
+            . . f 7 7 7 7 6 c 7 7 6 f c . . 
+            . . . f c c c c 7 7 6 f 7 7 c . 
+            . . c 7 2 7 7 7 6 c f 7 7 7 7 c 
+            . c 7 7 2 7 7 c f c 6 7 7 6 c c 
+            c 1 1 1 1 7 6 f c c 6 6 6 c . . 
+            f 1 1 1 1 1 6 6 c 6 6 6 6 f . . 
+            f 6 1 1 1 1 1 6 6 6 6 6 c f . . 
+            . f 6 1 1 1 1 1 1 6 6 6 f . . . 
+            . . c c c c c c c c c f . . . . 
+            `)
+        snake_idle.addAnimationFrame(img`
+            . . . c c c c c c . . . . . . . 
+            . . c 6 7 7 7 7 6 c . . . . . . 
+            . c 7 7 7 7 7 7 7 7 c . . . . . 
+            c 6 7 7 7 7 7 7 7 7 6 c . . . . 
+            c 7 6 6 6 6 6 6 7 7 7 c . . . . 
+            f 7 f f 6 6 f f 7 7 7 f . . . . 
+            f 7 7 7 7 7 7 7 7 7 7 f . . . . 
+            . f 7 7 7 7 6 c 7 7 6 f . . . . 
+            . . f c c c c 7 7 6 f c c c . . 
+            . . c 6 2 7 7 7 f c c 7 7 7 c . 
+            . c 6 7 7 2 7 7 c f 6 7 7 7 7 c 
+            . c 1 1 1 1 7 6 6 c 6 6 6 c c c 
+            . c 1 1 1 1 1 6 6 6 6 6 6 c . . 
+            . c 6 1 1 1 1 1 6 6 6 6 6 c . . 
+            . . c 6 1 1 1 1 1 7 6 6 c c . . 
+            . . . c c c c c c c c c c . . . 
+            `)
+        animation.attachAnimation(snake, snake_idle)
+        snake_alert_left = animation.createAnimation(ActionKind.walkleft, 200)
+        snake_alert_left.addAnimationFrame(img`
+            . . . c c c c c c . . . . . . . 
+            . . c 6 7 7 7 7 6 c . . . . . . 
+            . c 7 7 7 7 7 7 7 7 c . . . . . 
+            c 6 7 7 7 7 7 7 7 7 6 c . . . . 
+            c 7 c 6 6 6 6 c 7 7 7 c . . . . 
+            f 7 6 f 6 6 f 6 7 7 7 f . . . . 
+            f 7 7 7 7 7 7 7 7 7 7 f . . . . 
+            . f 7 7 7 7 6 c 7 7 6 f . . . . 
+            . . f c c c c 7 7 6 f c c c . . 
+            . . c 6 2 7 7 7 f c c 7 7 7 c . 
+            . c 6 7 7 2 7 7 c f 6 7 7 7 7 c 
+            . c 1 1 1 1 7 6 6 c 6 6 6 c c c 
+            . c 1 1 1 1 1 6 6 6 6 6 6 c . . 
+            . c 6 1 1 1 1 1 6 6 6 6 6 c . . 
+            . . c 6 1 1 1 1 1 7 6 6 c c . . 
+            . . . c c c c c c c c c c . . . 
+            `)
+        snake_alert_left.addAnimationFrame(img`
+            . . . . . c c c c c c c . . . . 
+            . . . . c 6 7 7 7 7 7 6 c . . . 
+            . . . c 7 c 6 6 6 6 c 7 6 c . . 
+            . . c 6 7 6 f 6 6 f 6 7 7 c . . 
+            . . c 7 7 7 7 7 7 7 7 7 7 c . . 
+            . . f 7 8 1 f f 1 6 7 7 7 f . . 
+            . . f 6 f 1 f f 1 f 7 7 7 f . . 
+            . . . f f 2 2 2 2 f 7 7 6 f . . 
+            . . c c f 2 2 2 2 7 7 6 f c . . 
+            . c 7 7 7 7 7 7 7 7 c c 7 7 c . 
+            c 7 1 1 1 7 7 7 7 f c 6 7 7 7 c 
+            f 1 1 1 1 1 7 6 f c c 6 6 6 c c 
+            f 1 1 1 1 1 1 6 6 c 6 6 6 c . . 
+            f 6 1 1 1 1 1 6 6 6 6 6 6 c . . 
+            . f 6 1 1 1 1 1 6 6 6 6 c . . . 
+            . . f f c c c c c c c c . . . . 
+            `)
+        animation.attachAnimation(snake, snake_alert_left)
+        snake_alert_right = animation.createAnimation(ActionKind.Walking, 200)
+        snake_alert_right.addAnimationFrame(img`
+            . . . . . . . c c c c c c . . . 
+            . . . . . . c 6 7 7 7 7 6 c . . 
+            . . . . . c 7 7 7 7 7 7 7 7 c . 
+            . . . . c 6 7 7 7 7 7 7 7 7 6 c 
+            . . . . c 7 7 7 c 6 6 6 6 c 7 c 
+            . . . . f 7 7 7 6 f 6 6 f 6 7 f 
+            . . . . f 7 7 7 7 7 7 7 7 7 7 f 
+            . . . . f 6 7 7 c 6 7 7 7 7 f . 
+            . . c c c f 6 7 7 c c c c f . . 
+            . c 7 7 7 c c f 7 7 7 2 6 c . . 
+            c 7 7 7 7 6 f c 7 7 2 7 7 6 c . 
+            c c c 6 6 6 c 6 6 7 1 1 1 1 c . 
+            . . c 6 6 6 6 6 6 1 1 1 1 1 c . 
+            . . c 6 6 6 6 6 1 1 1 1 1 6 c . 
+            . . c c 6 6 7 1 1 1 1 1 6 c . . 
+            . . . c c c c c c c c c c . . . 
+            `)
+        snake_alert_right.addAnimationFrame(img`
+            . . . . c c c c c c c . . . . . 
+            . . . c 6 7 7 7 7 7 6 c . . . . 
+            . . c 6 7 c 6 6 6 6 c 7 c . . . 
+            . . c 7 7 6 f 6 6 f 6 7 6 c . . 
+            . . c 7 7 7 7 7 7 7 7 7 7 c . . 
+            . . f 7 7 7 6 1 f f 1 8 7 f . . 
+            . . f 7 7 7 f 1 f f 1 f 6 f . . 
+            . . f 6 7 7 f 2 2 2 2 f f . . . 
+            . . c f 6 7 7 2 2 2 2 f c c . . 
+            . c 7 7 c c 7 7 7 7 7 7 7 7 c . 
+            c 7 7 7 6 c f 7 7 7 7 1 1 1 7 c 
+            c c 6 6 6 c c f 6 7 1 1 1 1 1 f 
+            . . c 6 6 6 c 6 6 1 1 1 1 1 1 f 
+            . . c 6 6 6 6 6 6 1 1 1 1 1 6 f 
+            . . . c 6 6 6 6 1 1 1 1 1 6 f . 
+            . . . . c c c c c c c c f f . . 
+            `)
+        animation.attachAnimation(snake, snake_alert_right)
+    }
+    for (let value of tiles.getTilesByType(tiles.util.object6)) {
+        snake = sprites.create(img`
+            . . . . c c c c c c . . . . . . 
+            . . . c 6 7 7 7 7 6 c . . . . . 
+            . . c 7 7 7 7 7 7 7 7 c . . . . 
+            . c 6 7 7 7 7 7 7 7 7 6 c . . . 
+            . c 7 6 f 6 6 f 6 7 7 7 c . . . 
+            . f 7 6 f 6 6 f 6 7 7 7 f . . . 
+            . f 7 7 7 7 7 7 7 7 7 7 f . . . 
+            . . f 7 7 7 7 7 7 7 7 6 f c . . 
+            . . . f c c c c c 7 6 f 7 7 c . 
+            . . c 7 2 7 7 7 6 c f 7 7 7 7 c 
+            . c 7 7 2 7 7 c f c 6 7 7 6 c c 
+            c 1 1 1 1 7 6 f c c 6 6 6 c . . 
+            f 1 1 1 1 1 6 6 c 6 6 6 6 f . . 
+            f 6 1 1 1 1 1 6 6 6 6 6 c f . . 
+            . f 6 1 1 1 1 1 1 6 6 6 f . . . 
+            . . c c c c c c c c c f . . . . 
+            `, SpriteKind.Enemy)
+        tiles.placeOnTile(snake, value)
+        tiles.setTileAt(value, assets.tile`Triger block crypt`)
+        snake_idle = animation.createAnimation(ActionKind.Idle, 1000)
+        snake_idle.addAnimationFrame(img`
+            . . . . c c c c c c . . . . . . 
+            . . . c 6 7 7 7 7 6 c . . . . . 
+            . . c 7 7 7 7 7 7 7 7 c . . . . 
+            . c 6 7 7 7 7 7 7 7 7 6 c . . . 
+            . c 7 6 6 6 6 6 6 7 7 7 c . . . 
+            . f 7 f f 6 6 f f 7 7 7 f . . . 
+            . f 7 7 7 7 7 7 7 7 7 7 f . . . 
+            . . f 7 7 7 7 6 c 7 7 6 f c . . 
+            . . . f c c c c 7 7 6 f 7 7 c . 
+            . . c 7 2 7 7 7 6 c f 7 7 7 7 c 
+            . c 7 7 2 7 7 c f c 6 7 7 6 c c 
+            c 1 1 1 1 7 6 f c c 6 6 6 c . . 
+            f 1 1 1 1 1 6 6 c 6 6 6 6 f . . 
+            f 6 1 1 1 1 1 6 6 6 6 6 c f . . 
+            . f 6 1 1 1 1 1 1 6 6 6 f . . . 
+            . . c c c c c c c c c f . . . . 
+            `)
+        snake_idle.addAnimationFrame(img`
+            . . . c c c c c c . . . . . . . 
+            . . c 6 7 7 7 7 6 c . . . . . . 
+            . c 7 7 7 7 7 7 7 7 c . . . . . 
+            c 6 7 7 7 7 7 7 7 7 6 c . . . . 
+            c 7 6 6 6 6 6 6 7 7 7 c . . . . 
+            f 7 f f 6 6 f f 7 7 7 f . . . . 
+            f 7 7 7 7 7 7 7 7 7 7 f . . . . 
+            . f 7 7 7 7 6 c 7 7 6 f . . . . 
+            . . f c c c c 7 7 6 f c c c . . 
+            . . c 6 2 7 7 7 f c c 7 7 7 c . 
+            . c 6 7 7 2 7 7 c f 6 7 7 7 7 c 
+            . c 1 1 1 1 7 6 6 c 6 6 6 c c c 
+            . c 1 1 1 1 1 6 6 6 6 6 6 c . . 
+            . c 6 1 1 1 1 1 6 6 6 6 6 c . . 
+            . . c 6 1 1 1 1 1 7 6 6 c c . . 
+            . . . c c c c c c c c c c . . . 
+            `)
+        animation.attachAnimation(snake, snake_idle)
+        snake_alert_left = animation.createAnimation(ActionKind.walkleft, 200)
+    }
+}
 game.onUpdateInterval(2000, function () {
     statusbar.value += 2
 })
